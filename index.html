@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Central de Downloads</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --primary:#0045da;
+      --primary-dark:#0036ad;
+      --bg:#0b1020;
+      --card:#11162a;
+      --text:#f1f4ff;
+      --muted:#9aa4d6;
+      --border:rgba(0,69,218,.35);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Poppins,sans-serif;
+      background:radial-gradient(1200px 600px at top,var(--primary) 0%,var(--bg) 45%);
+      color:var(--text); min-height:100vh; display:flex; justify-content:center; padding:40px 12px;
+    }
+
+    .app{width:100%; max-width:1100px}
+
+    header{display:flex;align-items:center;gap:16px;margin-bottom:22px;justify-content:space-between}
+    .header-text{flex:1}
+    .reload-btn{
+      background:var(--card);border:1px solid var(--border);color:var(--text);
+      padding:12px 14px;border-radius:14px;cursor:pointer;transition:.2s
+    }
+    .reload-btn:hover{background:var(--primary);color:#fff}
+    header img{width:64px;height:64px;border-radius:14px}
+    header h1{margin:0;font-size:1.8rem}
+    header p{margin:4px 0 0;color:var(--muted)}
+
+    .search-box{
+      margin:26px 0;
+      position:relative
+    }
+    .search-box input{
+      width:100%;padding:15px 48px 15px 18px;border-radius:18px;
+      border:1px solid var(--border);background:linear-gradient(145deg,#141a33,#0f1428);
+      color:var(--text);font-size:1rem;outline:none
+    }
+    .search-box i{
+      position:absolute;right:18px;top:50%;transform:translateY(-50%);
+      color:var(--muted);font-size:1.1rem
+    }
+    .search-box input{
+      width:100%;padding:14px 16px;border-radius:14px;
+      border:1px solid var(--border);background:var(--card);
+      color:var(--text);font-size:1rem
+    }
+
+    .category{margin-bottom:32px}
+    .category h2{margin-bottom:14px;color:#9fb6ff}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+
+    .card{
+      background:linear-gradient(145deg,#141a33,#0f1428);
+      border:1px solid var(--border);border-radius:18px;padding:20px;
+      display:flex;flex-direction:column;justify-content:space-between;transition:.25s ease
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.45)}
+
+    .tag{font-size:.7rem;font-weight:600;padding:6px 10px;border-radius:999px;
+      background:rgba(0,69,218,.15);color:#9fb6ff;display:inline-block;margin-bottom:10px}
+
+    .card h3{margin:0 0 6px;font-size:1.05rem}
+    .card p{margin:0 0 14px;font-size:.85rem;color:var(--muted)}
+
+    .card button{
+      padding:10px;border-radius:12px;border:none;cursor:pointer;
+      background:var(--primary);color:#fff;font-weight:700
+    }
+    .card button:hover{background:var(--primary-dark)}
+
+    .loader{
+      position:fixed;inset:0;background:rgba(0,0,0,.75);
+      display:none;align-items:center;justify-content:center;z-index:999
+    }
+    .spinner{
+      width:60px;height:60px;border:6px solid rgba(255,255,255,.2);
+      border-top:6px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .notify{
+      position:fixed;bottom:20px;right:20px;
+      background:var(--card);border:1px solid var(--border);
+      padding:14px 18px;border-radius:12px;font-weight:600;
+      animation:slide .4s ease
+    }
+    @keyframes slide{from{opacity:0;transform:translateX(100%)}to{opacity:1}}
+
+    footer{margin-top:40px;text-align:center;font-size:.8rem;color:var(--muted)}
+  </style>
+</head>
+<body>
+
+<div class="loader" id="loader"><div class="spinner"></div></div>
+
+<div class="app">
+  <header>
+    <img src="https://blob.promisse.app/216240699819950080/59671800419_image.png">
+    <div class="header-text">
+      <h1>Central de Downloads</h1>
+      <p>Abaixo escolha o produto que deseja baixar</p>
+    </div>
+    <button class="reload-btn" onclick="location.reload()" title="Recarregar página">
+      <i class="fa-solid fa-rotate"></i>
+    </button>
+  </header>
+
+  <div class="search-box">
+    <input id="search" placeholder="Pesquisar qualquer item...">
+  </div>
+
+  <div id="content"></div>
+
+  <footer>© 2026 PlayboyCheats — Central de Downloads</footer>
+</div>
+
+<script>
+const categorias = [
+  {
+    nome: 'Garena Free Fire',
+    itens: [
+      { nome:'FreeFire External', desc:'Senha: 1', link:'https://www.mediafire.com/file/w8jf6y0hn1s3y74/External.rar/file' },
+      { nome:'FreeFire Internal', desc:'Senha: 1', link:' https://www.mediafire.com/file/37zxrcf9g3rxds4/Internal.rar/file' },
+      { nome:'Free Fire Classic', desc:'Senha: 1', link:'https://www.mediafire.com/file/u7frt3c1f3atmm6/Classic.rar/file' },
+      { nome:'Free Fire Bypass Mobile', desc:'Senha: 1', link:'https://www.mediafire.com/file/86djq9vkm6x3h60/BypassMob.rar/file' },
+      { nome:'Free Fire Android', desc:'Senha: 1', link:'#' },    
+      { nome:'FreeFire Iphone', desc:'Senha: 1', link:'#' }
+    ]
+  },
+  {
+    nome: 'Outros Games',
+    itens: [
+      { nome:'FiveM External', desc:'Senha: 1', link:'https://www.mediafire.com/file/hdtgd0x4ojw5665/FiveM.rar/file' },
+      { nome:'CounterStrike External', desc:'Senha: 1', link:'https://www.mediafire.com/file/of0snq2xz3lw47p/CS2.rar/file' },
+      { nome:'Warzone External', desc:'Senha: 1', link:'https://www.mediafire.com/file/gbbt9xr83xoqhkz/Warzone.rar/file' },
+      { nome:'Valorant External', desc:'Senha: 1', link:'https://app.flowware.pro/' },
+      { nome:'Roblox Executor', desc:'Senha: 1', link:'https://www.mediafire.com/file/breoopdp2pjswul/Roblox.rar/file' },
+      { nome:'Fortnite External', desc:'Senha: 1', link:'#' }   
+    ]
+  }
+];
+
+const content = document.getElementById('content');
+const search = document.getElementById('search');
+const loader = document.getElementById('loader');
+
+function render(){
+  content.innerHTML = '';
+  categorias.forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'category';
+    section.innerHTML = `<h2>${cat.nome}</h2><div class="grid"></div>`;
+
+    const grid = section.querySelector('.grid');
+
+    cat.itens.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.search = (item.nome + item.desc + cat.nome).toLowerCase();
+
+      card.innerHTML = `
+        <span class="tag">${cat.nome}</span>
+        <h3>${item.nome}</h3>
+        <p>${item.desc}</p>
+        <button>Baixar</button>
+      `;
+
+      card.querySelector('button').onclick = () => download(item.link, item.nome);
+      grid.appendChild(card);
+    });
+
+    content.appendChild(section);
+  });
+}
+
+function download(link, nome){
+  loader.style.display='flex';
+  setTimeout(()=>{
+    loader.style.display='none';
+    window.open(link,'_blank');
+    notify(`Download iniciado: ${nome}`);
+  },1200);
+}
+
+function notify(text){
+  const n = document.createElement('div');
+  n.className='notify';
+  n.textContent=text;
+  document.body.appendChild(n);
+  setTimeout(()=>n.remove(),4000);
+}
+
+search.addEventListener('input',e=>{
+  const v = e.target.value.toLowerCase();
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display = c.dataset.search.includes(v)?'flex':'none';
+  });
+});
+
+render();
+</script>
+
+</body>
+</html>
